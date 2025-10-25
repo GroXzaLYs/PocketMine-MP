@@ -32,6 +32,7 @@ use pocketmine\item\VanillaItems;
 use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
 use pocketmine\player\Player;
+use function assert;
 use function atan2;
 use function mt_rand;
 use function rad2deg;
