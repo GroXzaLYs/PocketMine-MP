@@ -23,17 +23,29 @@ declare(strict_types=1);
 
 namespace pocketmine\entity;
 
+use pocketmine\entity\ai\TargetFinder;
+use pocketmine\entity\animation\ArmSwingAnimation;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
+use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\item\Item;
 use pocketmine\item\VanillaItems;
+use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
+use pocketmine\player\Player;
 use function mt_rand;
+use function rad2deg;
+use function sqrt;
 
 class Zombie extends Living{
 
 	public static function getNetworkTypeId() : string{ return EntityIds::ZOMBIE; }
 
+	protected ?Player $target = null;
+	protected int $wanderTick = 0;
+	protected int $attackCooldown = 0;
+
 	protected function getInitialSizeInfo() : EntitySizeInfo{
-		return new EntitySizeInfo(1.9, 0.6); //TODO: eye height ??
+		return new EntitySizeInfo(1.9, 0.6);
 	}
 
 	public function getName() : string{
@@ -58,7 +70,6 @@ class Zombie extends Living{
 					break;
 			}
 		}
-
 		return $drops;
 	}
 
@@ -69,5 +80,76 @@ class Zombie extends Living{
 
 	public function getPickedItem() : ?Item{
 		return VanillaItems::ZOMBIE_SPAWN_EGG();
+	}
+
+	public function onUpdate(int $currentTick) : bool{
+		if(!$this->isAlive()){
+			return parent::onUpdate($currentTick);
+		}
+
+		if($this->attackCooldown > 0){
+			$this->attackCooldown--;
+		}
+
+		if($this->target === null || !$this->target->isAlive() || $this->target->isClosed()){
+			$this->target = TargetFinder::findNearestPlayer($this, 16);
+		}
+
+		if($this->target !== null){
+			$distance = $this->location->distance($this->target->getLocation());
+
+			if($distance <= 1.6){
+				$this->lookAt($this->target->getPosition());
+				$this->tryAttack($this->target);
+			}else{
+				$this->moveToward($this->target->getPosition(), 0.20);
+			}
+		}else{
+			if($this->wanderTick++ > 60){
+				$this->wanderTick = 0;
+				$rand = new Vector3(
+					$this->location->x + mt_rand(-6, 6),
+					$this->location->y,
+					$this->location->z + mt_rand(-6, 6)
+				);
+				$this->moveToward($rand, 0.1);
+			}
+		}
+
+		return parent::onUpdate($currentTick);
+	}
+
+	protected function moveToward(Vector3 $pos, float $speed) : void{
+		$dx = $pos->x - $this->location->x;
+		$dz = $pos->z - $this->location->z;
+		$length = sqrt($dx * $dx + $dz * $dz);
+		if($length == 0){
+			return;
+		}
+		$this->motion->x = $dx / $length * $speed;
+		$this->motion->z = $dz / $length * $speed;
+		$this->setRotation(rad2deg(atan2(-$dx, $dz)), 0);
+		$this->updateMovement();
+	}
+
+	protected function lookAt(Vector3 $target) : void{
+		$dx = $target->x - $this->location->x;
+		$dz = $target->z - $this->location->z;
+		$this->setRotation(rad2deg(atan2(-$dx, $dz)), 0);
+	}
+
+	protected function tryAttack(Entity $entity) : void{
+		if($this->attackCooldown > 0){
+			return;
+		}
+		$this->attackCooldown = 20;
+		$damage = 3;
+
+		$ev = new EntityDamageByEntityEvent($this, $entity, EntityDamageEvent::CAUSE_ENTITY_ATTACK, $damage);
+		$entity->attack($ev);
+
+		if(!$ev->isCancelled()){
+			$this->broadcastAnimation(new ArmSwingAnimation($this));
+		}
 	}
 }
