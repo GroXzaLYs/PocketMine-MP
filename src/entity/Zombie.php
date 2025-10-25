@@ -32,6 +32,7 @@ use pocketmine\item\VanillaItems;
 use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
 use pocketmine\player\Player;
+use function atan2;
 use function mt_rand;
 use function rad2deg;
 use function sqrt;
@@ -96,12 +97,16 @@ class Zombie extends Living{
 		}
 
 		if($this->target instanceof Player){
-			$distance = $this->location->distance($this->target->getLocation());
+			/** @var Player $target */
+			$target = $this->target;
+			assert($target instanceof Player);
+
+			$distance = $this->location->distance($target->getLocation());
 			if($distance <= 1.6){
-				$this->lookAt($this->target->getPosition());
-				$this->tryAttack($this->target);
+				$this->lookAt($target->getPosition());
+				$this->tryAttack($target);
 			}else{
-				$this->moveToward($this->target->getPosition(), 0.20);
+				$this->moveToward($target->getPosition(), 0.20);
 			}
 		}else{
 			if($this->wanderTick++ > 60){
