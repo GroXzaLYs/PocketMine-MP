@@ -95,9 +95,8 @@ class Zombie extends Living{
 			$this->target = TargetFinder::findNearestPlayer($this, 16);
 		}
 
-		if($this->target !== null){
+		if($this->target instanceof Player){
 			$distance = $this->location->distance($this->target->getLocation());
-
 			if($distance <= 1.6){
 				$this->lookAt($this->target->getPosition());
 				$this->tryAttack($this->target);
@@ -119,6 +118,12 @@ class Zombie extends Living{
 		return parent::onUpdate($currentTick);
 	}
 
+	public function lookAt(Vector3 $target) : void{
+		$dx = $target->x - $this->location->x;
+		$dz = $target->z - $this->location->z;
+		$this->setRotation(rad2deg(atan2(-$dx, $dz)), 0);
+	}
+
 	protected function moveToward(Vector3 $pos, float $speed) : void{
 		$dx = $pos->x - $this->location->x;
 		$dz = $pos->z - $this->location->z;
@@ -130,12 +135,6 @@ class Zombie extends Living{
 		$this->motion->z = $dz / $length * $speed;
 		$this->setRotation(rad2deg(atan2(-$dx, $dz)), 0);
 		$this->updateMovement();
-	}
-
-	protected function lookAt(Vector3 $target) : void{
-		$dx = $target->x - $this->location->x;
-		$dz = $target->z - $this->location->z;
-		$this->setRotation(rad2deg(atan2(-$dx, $dz)), 0);
 	}
 
 	protected function tryAttack(Entity $entity) : void{
