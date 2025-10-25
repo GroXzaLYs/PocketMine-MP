@@ -128,7 +128,7 @@ class Zombie extends Living{
 		$dx = $pos->x - $this->location->x;
 		$dz = $pos->z - $this->location->z;
 		$length = sqrt($dx * $dx + $dz * $dz);
-		if($length == 0){
+		if($length === 0.0){
 			return;
 		}
 		$this->motion->x = $dx / $length * $speed;
