@@ -89,15 +89,16 @@ class Zombie extends Living{
 	}
 
 	public function onUpdate(int $currentTick) : bool{
+		$world = $this->getWorld();
 		if(!$this->isAlive()){
 			return parent::onUpdate($currentTick);
 		}
 
-		if($world->getTime() >= 12000 && $world->getTime() < 24000 && !$this->isInsideOfWater() && !$this->isUnderCover()){
+		if($world->getTime() >= 12000 && $world->getTime() < 24000 && !$this->isUnderwater() && !$this->isUnderCover()){
 			$this->setOnFire(8);
 		}
 
-		if($this->underWater()){
+		if($this->isUnderwater()){
 		$this->drownTick++;
 			if($this->drownTick >= 600){
 				$this->transformToDrowned();
@@ -117,7 +118,6 @@ class Zombie extends Living{
 
 		if($this->target instanceof Player){
 			$target = $this->target;
-			assert($target instanceof Player);
 
 			if($target->isCreative() || $target->getGamemode() === GameMode::CREATIVE){
 				$this->target = null;
