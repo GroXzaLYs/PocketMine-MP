@@ -155,6 +155,7 @@ use function strtolower;
  * @method static Item DISC_FRAGMENT_5()
  * @method static Item DRAGON_BREATH()
  * @method static DriedKelp DRIED_KELP()
+ * @method static SpawnEgg DROWNED_SPAWN_EGG()
  * @method static Item DUNE_ARMOR_TRIM_SMITHING_TEMPLATE()
  * @method static Dye DYE()
  * @method static Item ECHO_SHARD()
@@ -666,6 +667,11 @@ final class VanillaItems{
 		self::register("villager_spawn_egg", fn(IID $id) => new class($id, "Villager Spawn Egg") extends SpawnEgg{
 			protected function createEntity(World $world, Vector3 $pos, float $yaw, float $pitch) : Entity{
 				return new Villager(Location::fromObject($pos, $world, $yaw, $pitch));
+			}
+		});
+		self::register("drowned_spawn_egg", fn(IID $id) => new class($id, "Drowned Spawn Egg") extends SpawnEgg{
+			protected function createEntity(World $world, Vector3 $pos, float $yaw, float $pitch) : Entity{
+				return new Drowned(Location::fromObject($pos, $world, $yaw, $pitch));
 			}
 		});
 	}

@@ -33,30 +33,29 @@ use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
 use pocketmine\player\GameMode;
 use pocketmine\player\Player;
-use pocketmine\world\World;
 use function assert;
 use function atan2;
 use function mt_rand;
 use function rad2deg;
 use function sqrt;
 
-class Zombie extends Living{
+class Drowned extends Living{
 
 	public static function getNetworkTypeId() : string{
-		return EntityIds::ZOMBIE;
+		return EntityIds::DROWNED;
 	}
 
 	protected ?Player $target = null;
 	protected int $wanderTick = 0;
 	protected int $attackCooldown = 0;
-	protected int $drownTick = 0;
+	protected bool $isSwimming = false;
 
 	protected function getInitialSizeInfo() : EntitySizeInfo{
 		return new EntitySizeInfo(1.9, 0.6);
 	}
 
 	public function getName() : string{
-		return "Zombie";
+		return "Drowned";
 	}
 
 	public function getDrops() : array{
@@ -64,19 +63,12 @@ class Zombie extends Living{
 			VanillaItems::ROTTEN_FLESH()->setCount(mt_rand(0, 2))
 		];
 
-		if(mt_rand(0, 199) < 5){
-			switch(mt_rand(0, 2)){
-				case 0:
-					$drops[] = VanillaItems::IRON_INGOT();
-					break;
-				case 1:
-					$drops[] = VanillaItems::CARROT();
-					break;
-				case 2:
-					$drops[] = VanillaItems::POTATO();
-					break;
-			}
+		if(mt_rand(0, 99) < 5){
+			$drops[] = VanillaItems::TRIDENT();
+		}elseif(mt_rand(0, 99) < 5){
+			$drops[] = VanillaItems::COPPER_INGOT();
 		}
+
 		return $drops;
 	}
 
@@ -85,7 +77,7 @@ class Zombie extends Living{
 	}
 
 	public function getPickedItem() : ?Item{
-		return VanillaItems::ZOMBIE_SPAWN_EGG();
+		return VanillaItems::DROWNED_SPAWN_EGG();
 	}
 
 	public function onUpdate(int $currentTick) : bool{
@@ -93,21 +85,10 @@ class Zombie extends Living{
 			return parent::onUpdate($currentTick);
 		}
 
-		$time = $this->getWorld()->getTimeOfDay() % World::TIME_FULL_DAY;
-		$isDay = $time >= World::TIME_DAY && $time < World::TIME_SUNSET;
-
-		if($isDay && !$this->isInsideOfWater() && !$this->isUnderCover()){
-			$this->setOnFire(8);
-		}
-
-		if($this->isInsideOfWater()){
-			$this->drownTick++;
-			if($this->drownTick >= 600){
-				$this->transformToDrowned();
-				return false;
-			}
+		if(!$this->isInsideOfWater()){
+			$this->isSwimming = false;
 		}else{
-			$this->drownTick = 0;
+			$this->isSwimming = true;
 		}
 
 		if($this->attackCooldown > 0){
@@ -130,18 +111,18 @@ class Zombie extends Living{
 					$this->lookAt($target->getPosition());
 					$this->tryAttack($target);
 				}else{
-					$this->moveToward($target->getPosition(), 0.20);
+					$this->moveToward($target->getPosition(), $this->isSwimming ? 0.22 : 0.12);
 				}
 			}
 		}else{
-			if($this->wanderTick++ > 60){
+			if($this->wanderTick++ > 80){
 				$this->wanderTick = 0;
 				$rand = new Vector3(
 					$this->location->x + mt_rand(-6, 6),
 					$this->location->y,
 					$this->location->z + mt_rand(-6, 6)
 				);
-				$this->moveToward($rand, 0.1);
+				$this->moveToward($rand, $this->isSwimming ? 0.15 : 0.08);
 			}
 		}
 
@@ -161,6 +142,7 @@ class Zombie extends Living{
 		if($length === 0.0){
 			return;
 		}
+
 		$this->motion->x = $dx / $length * $speed;
 		$this->motion->z = $dz / $length * $speed;
 		$this->setRotation(rad2deg(atan2(-$dx, $dz)), 0);
@@ -171,8 +153,9 @@ class Zombie extends Living{
 		if($this->attackCooldown > 0){
 			return;
 		}
+
 		$this->attackCooldown = 20;
-		$damage = 3;
+		$damage = 4;
 
 		$ev = new EntityDamageByEntityEvent($this, $entity, EntityDamageEvent::CAUSE_ENTITY_ATTACK, $damage);
 		$entity->attack($ev);
@@ -180,21 +163,5 @@ class Zombie extends Living{
 		if(!$ev->isCancelled()){
 			$this->broadcastAnimation(new ArmSwingAnimation($this));
 		}
-	}
-
-	protected function isUnderCover() : bool{
-		$blockAbove = $this->getWorld()->getBlock($this->location->add(0, 1, 0));
-		return !$blockAbove->isTransparent();
-	}
-
-	protected function transformToDrowned() : void{
-		$world = $this->getWorld();
-		$drowned = new Drowned($world, $this->location);
-		$drowned->setHealth($this->getHealth());
-		$drowned->setNameTagVisible($this->isNameTagVisible());
-		$drowned->setNameTagAlwaysVisible($this->isNameTagAlwaysVisible());
-
-		$this->flagForDespawn();
-		$world->addEntity($drowned);
 	}
 }
