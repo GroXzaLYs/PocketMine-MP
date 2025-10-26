@@ -63,12 +63,6 @@ class Drowned extends Living{
 			VanillaItems::ROTTEN_FLESH()->setCount(mt_rand(0, 2))
 		];
 
-		if(mt_rand(0, 99) < 5){
-			$drops[] = VanillaItems::TRIDENT();
-		}elseif(mt_rand(0, 99) < 5){
-			$drops[] = VanillaItems::COPPER_INGOT();
-		}
-
 		return $drops;
 	}
 
@@ -85,7 +79,7 @@ class Drowned extends Living{
 			return parent::onUpdate($currentTick);
 		}
 
-		if(!$this->isInsideOfWater()){
+		if(!$this->isUnderwater()){
 			$this->isSwimming = false;
 		}else{
 			$this->isSwimming = true;
@@ -101,9 +95,8 @@ class Drowned extends Living{
 
 		if($this->target instanceof Player){
 			$target = $this->target;
-			assert($target instanceof Player);
 
-			if($target->isCreative() || $target->getGamemode() === GameMode::CREATIVE()){
+			if($target->isCreative() || $target->getGamemode() === GameMode::CREATIVE){
 				$this->target = null;
 			}else{
 				$distance = $this->location->distance($target->getLocation());
