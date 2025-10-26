@@ -33,8 +33,6 @@ use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
 use pocketmine\player\GameMode;
 use pocketmine\player\Player;
-use pocketmine\world\World;
-use function assert;
 use function atan2;
 use function mt_rand;
 use function rad2deg;
