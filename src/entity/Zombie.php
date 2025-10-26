@@ -3,15 +3,15 @@
 /*
  *
  *  ____            _        _   __  __ _                  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/ (_)_ __   ___      |  \/  |  _ \
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/(_) |(__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
  * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
- *(at your option) any later version.
+ * (at your option) any later version.
  *
  * @author PocketMine Team
  * @link http://www.pocketmine.net/
@@ -93,15 +93,12 @@ class Zombie extends Living{
 			return parent::onUpdate($currentTick);
 		}
 
-		$time = $this->getWorld()->getTimeOfDay() % World::TIME_FULL_DAY;
-		$isDay = $time >= World::TIME_DAY && $time < World::TIME_SUNSET;
-
-		if($isDay && !$this->isInsideOfWater() && !$this->isUnderCover()){
+		if($world->getTime() >= 12000 && $world->getTime() < 24000 && !$this->isInsideOfWater() && !$this->isUnderCover()){
 			$this->setOnFire(8);
 		}
 
-		if($this->isInsideOfWater()){
-			$this->drownTick++;
+		if($this->underWater()){
+		$this->drownTick++;
 			if($this->drownTick >= 600){
 				$this->transformToDrowned();
 				return false;
@@ -122,7 +119,7 @@ class Zombie extends Living{
 			$target = $this->target;
 			assert($target instanceof Player);
 
-			if($target->isCreative() || $target->getGamemode() === GameMode::CREATIVE()){
+			if($target->isCreative() || $target->getGamemode() === GameMode::CREATIVE){
 				$this->target = null;
 			}else{
 				$distance = $this->location->distance($target->getLocation());
@@ -189,7 +186,7 @@ class Zombie extends Living{
 
 	protected function transformToDrowned() : void{
 		$world = $this->getWorld();
-		$drowned = new Drowned($world, $this->location);
+		$drowned = new Drowned($this->location);
 		$drowned->setHealth($this->getHealth());
 		$drowned->setNameTagVisible($this->isNameTagVisible());
 		$drowned->setNameTagAlwaysVisible($this->isNameTagAlwaysVisible());

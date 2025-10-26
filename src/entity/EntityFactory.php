@@ -195,7 +195,7 @@ final class EntityFactory{
 			'ThrownTrident' //as above
 		]);
 
-    $this->register(Squid::class, function(World $world, CompoundTag $nbt) : Drowned{
+	$this->register(Squid::class, function(World $world, CompoundTag $nbt) : Drowned{
 			return new Drowned(Helper::parseLocation($nbt, $world), $nbt);
 		}, ['Drowned', 'minecraft:drowned']);
 

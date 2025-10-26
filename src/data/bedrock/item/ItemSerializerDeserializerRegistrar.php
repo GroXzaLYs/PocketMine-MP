@@ -235,7 +235,7 @@ final class ItemSerializerDeserializerRegistrar{
 		$this->map1to1Item(Ids::DISC_FRAGMENT_5, Items::DISC_FRAGMENT_5());
 		$this->map1to1Item(Ids::DRAGON_BREATH, Items::DRAGON_BREATH());
 		$this->map1to1Item(Ids::DRIED_KELP, Items::DRIED_KELP());
-		$this->map1to1Item(Ids::DROWNED_SPAWN_EGG, Items::DROWMED_SPAWN_EGG());
+		$this->map1to1Item(Ids::DROWNED_SPAWN_EGG, Items::DROWNED_SPAWN_EGG());
 		$this->map1to1Item(Ids::DUNE_ARMOR_TRIM_SMITHING_TEMPLATE, Items::DUNE_ARMOR_TRIM_SMITHING_TEMPLATE());
 		$this->map1to1Item(Ids::ECHO_SHARD, Items::ECHO_SHARD());
 		$this->map1to1Item(Ids::EGG, Items::EGG());
