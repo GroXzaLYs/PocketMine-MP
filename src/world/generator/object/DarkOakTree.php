@@ -44,23 +44,31 @@ final class DarkOakTree extends Tree{
 	}
 
 	protected function placeTrunk(int $x, int $y, int $z, Random $random, int $height, BlockTransaction $transaction) : void{
-		foreach([
+		// 2x2 dirt base
+		$base = [
 			[$x, $y - 1, $z],
 			[$x + 1, $y - 1, $z],
 			[$x, $y - 1, $z + 1],
 			[$x + 1, $y - 1, $z + 1]
-		] as $v){
-			$transaction->addBlockAt(...$v, VanillaBlocks::DIRT());
+		];
+
+		foreach($base as $v){
+			[$bx, $by, $bz] = $v;
+			$transaction->addBlockAt($bx, $by, $bz, VanillaBlocks::DIRT());
 		}
 
+		// 2x2 trunk
 		for($yy = 0; $yy < $height; $yy++){
-			foreach([
+			$layer = [
 				[$x, $y + $yy, $z],
 				[$x + 1, $y + $yy, $z],
 				[$x, $y + $yy, $z + 1],
 				[$x + 1, $y + $yy, $z + 1]
-			] as $v){
-				$transaction->addBlockAt(...$v, $this->trunkBlock);
+			];
+
+			foreach($layer as $v){
+				[$tx, $ty, $tz] = $v;
+				$transaction->addBlockAt($tx, $ty, $tz, $this->trunkBlock);
 			}
 		}
 	}
@@ -70,10 +78,14 @@ final class DarkOakTree extends Tree{
 
 		for($yy = $top - 2; $yy <= $top; $yy++){
 			$radius = ($top - $yy) + 2;
+
 			for($xx = $x - $radius; $xx <= $x + $radius + 1; $xx++){
 				for($zz = $z - $radius; $zz <= $z + $radius + 1; $zz++){
-					if(($xx - $x) ** 2 + ($zz - $z) ** 2 <= $radius ** 2 + 1){
-						if($transaction->fetchBlockAt($xx, $yy, $zz)->canBeReplaced()){
+
+					if((($xx - $x) ** 2) + (($zz - $z) ** 2) <= ($radius ** 2) + 1){
+						$block = $transaction->fetchBlockAt($xx, $yy, $zz);
+
+						if($block->canBeReplaced()){
 							$transaction->addBlockAt($xx, $yy, $zz, $this->leafBlock);
 						}
 					}
