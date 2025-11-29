@@ -27,7 +27,7 @@ use pocketmine\world\generator\object\TreeType;
 use pocketmine\world\generator\populator\TallGrass;
 use pocketmine\world\generator\populator\Tree;
 
-class DarkForestBiome extends GrassyBiome{
+class RoofedForestBiome extends GrassyBiome{
 
 	public function __construct(){
 		parent::__construct();
@@ -55,6 +55,6 @@ class DarkForestBiome extends GrassyBiome{
 	}
 
 	public function getName() : string{
-		return "Dark Forest";
+		return "";
 	}
 }
