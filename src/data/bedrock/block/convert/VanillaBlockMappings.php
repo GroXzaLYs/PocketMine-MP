@@ -550,6 +550,7 @@ final class VanillaBlockMappings{
 			Ids::DARK_OAK_SAPLING => Blocks::DARK_OAK_SAPLING(),
 			Ids::JUNGLE_SAPLING => Blocks::JUNGLE_SAPLING(),
 			Ids::OAK_SAPLING => Blocks::OAK_SAPLING(),
+			Ids::PALE_0AK_SAPLING => Blocks::PALE_OAK_SAPLING(),
 			Ids::SPRUCE_SAPLING => Blocks::SPRUCE_SAPLING(),
 		] as $id => $block){
 			$reg->mapModel(Model::create($block, $id)->properties($properties));
