@@ -33,7 +33,8 @@ final class TreeFactory{
 	 */
 	public static function get(Random $random, ?TreeType $type = null) : ?Tree{
 		return match($type){
-			null, TreeType::OAK => new OakTree(), //TODO: big oak has a 1/10 chance
+			null => new OakTree(),
+			TreeType::OAK => new OakTree(), //TODO: big oak has a 1/10 chance
 			TreeType::SPRUCE => new SpruceTree(),
 			TreeType::JUNGLE => new JungleTree(),
 			TreeType::ACACIA => new AcaciaTree(),
