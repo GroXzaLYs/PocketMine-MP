@@ -35,6 +35,7 @@ use pocketmine\world\generator\object\TreeType;
  * @method static SaplingType DARK_OAK()
  * @method static SaplingType JUNGLE()
  * @method static SaplingType OAK()
+ * @method static SaplingType PALE_0AK()
  * @method static SaplingType SPRUCE()
  */
 enum SaplingType{
