@@ -47,6 +47,8 @@ final class BiomeRegistry{
 		$this->register(BiomeIds::TAIGA, new TaigaBiome());
 		$this->register(BiomeIds::SWAMPLAND, new SwampBiome());
 		$this->register(BiomeIds::RIVER, new RiverBiome());
+		$this->register(BiomeIds::PALE_GARDEN, new PaleGardenBiome());
+		$this->register(BiomeIds::ROOFED_FOREST, new RoofedForestBiome());
 
 		$this->register(BiomeIds::HELL, new HellBiome());
 
@@ -55,6 +57,7 @@ final class BiomeRegistry{
 		$this->register(BiomeIds::EXTREME_HILLS_EDGE, new SmallMountainsBiome());
 
 		$this->register(BiomeIds::BIRCH_FOREST, new ForestBiome(TreeType::BIRCH));
+		
 	}
 
 	public function register(int $id, Biome $biome) : void{
