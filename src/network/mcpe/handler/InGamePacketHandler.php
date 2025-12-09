@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace pocketmine\network\mcpe\handler;
 
 use pocketmine\block\BaseSign;
+use pocketmine\block\CommandBlock;
 use pocketmine\block\Lectern;
 use pocketmine\block\tile\Sign;
 use pocketmine\block\utils\SignText;
@@ -862,23 +863,20 @@ class InGamePacketHandler extends PacketHandler{
 
 	public function handleCommandBlockUpdate(CommandBlockUpdatePacket $packet) : bool{
 		$player = $this->session->getPlayer();
-		if($packet->type !== CommandBlockUpdateType::UPDATE){
-			return true;
-		}
-		
+
 		$pos = $packet->blockPosition;
 		$world = $player->getWorld();
 		$tile = $world->getTile($pos);
-		
+
 		if(!$tile instanceof CommandBlockTile){
 			return true;
 		}
 		$tile->setCommand($packet->command);
 
 		$mode = match($packet->mode){
-			CommandBlockMode::REPEATING => "REPEAT",
-			CommandBlockMode::CHAIN => "CHAIN",
-			default => "IMPULSE"
+			CommandBlock::REPEATING => CommandBlock::REPEATING,
+			CommandBlock::CHAIN => CommandBlock::REPEATING,
+			default => CommandBlock::IMPULSE
 		};
 		$tile->setMode($mode);
 		$tile->setConditional($packet->conditional);

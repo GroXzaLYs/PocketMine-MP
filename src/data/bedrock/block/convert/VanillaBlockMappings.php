@@ -1263,7 +1263,9 @@ final class VanillaBlockMappings{
 			new BoolProperty(StateNames::OCCUPIED_BIT, fn(Bed $b) => $b->isOccupied(), fn(Bed $b, bool $v) => $b->setOccupied($v)),
 			$commonProperties->horizontalFacingSWNE
 		]));
-		$reg->mapModel(Model::create(Blocks::COMMAND_BLOCK(), Ids::COMMAND_BLOCK));
+		$reg->mapModel(Model::create(Blocks::BEDROCK(), Ids::BEDROCK)->properties([
+			new BoolProperty(StateNames::INFINIBURN_BIT, fn(Bedrock $b) => $b->burnsForever(), fn(Bedrock $b, bool $v) => $b->setBurnsForever($v))
+		]));
 		$reg->mapModel(Model::create(Blocks::BELL(), Ids::BELL)->properties([
 			BoolProperty::unused(StateNames::TOGGLE_BIT, false),
 			new ValueFromStringProperty(StateNames::ATTACHMENT, ValueMappings::getInstance()->bellAttachmentType, fn(Bell $b) => $b->getAttachmentType(), fn(Bell $b, BellAttachmentType $v) => $b->setAttachmentType($v)),
@@ -1317,6 +1319,10 @@ final class VanillaBlockMappings{
 		$reg->mapModel(Model::create(Blocks::COCOA_POD(), Ids::COCOA)->properties([
 			new IntProperty(StateNames::AGE, 0, 2, fn(CocoaBlock $b) => $b->getAge(), fn(CocoaBlock $b, int $v) => $b->setAge($v)),
 			$commonProperties->horizontalFacingSWNEInverted
+		]));
+		$reg->mapModel(Model::create(Blocks::COMMAND_BLOCK(), Ids::COMMAND_BLOCK)->properties([
+			new	BoolProperty(StateNames::CONDITIONAL_BIT, fn(CommandBlock $b) => $b->isConditional(), fn(CommandBlock $b, bool $v) => $b->setConditional()),
+			$commonProperties->horizontalFacing
 		]));
 
 		//D

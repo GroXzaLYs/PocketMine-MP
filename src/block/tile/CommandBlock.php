@@ -194,4 +194,17 @@ class CommandBlock extends Tile{
 			}
 		}
 	}
+
+	public function isConditional() : bool{
+		$tile = $this->position->getWorld()->getTile($this->position);
+		return $tile instanceof CommandBlockTile ? $tile->isConditional() : false;
+	}
+
+	public function setConditional(bool $value) : void{
+		$tile = $this->position->getWorld()->getTile($this->position);
+		if($tile instanceof CommandBlockTile){
+			$tile->setConditional($value);
+			$tile->onChanged();
+		}
+	}
 }

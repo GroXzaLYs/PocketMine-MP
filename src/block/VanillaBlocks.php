@@ -224,6 +224,7 @@ use function strtolower;
  * @method static Wall COBBLESTONE_WALL()
  * @method static Cobweb COBWEB()
  * @method static CocoaBlock COCOA_POD()
+ * @method static CommandBlock COMMAND_BLOCK()
  * @method static ChemistryTable COMPOUND_CREATOR()
  * @method static Concrete CONCRETE()
  * @method static ConcretePowder CONCRETE_POWDER()
