@@ -861,7 +861,31 @@ class InGamePacketHandler extends PacketHandler{
 	}
 
 	public function handleCommandBlockUpdate(CommandBlockUpdatePacket $packet) : bool{
-		return false; //TODO
+		$player = $this->session->getPlayer();
+		if($packet->type !== CommandBlockUpdateType::UPDATE){
+			return true;
+		}
+		
+		$pos = $packet->blockPosition;
+		$world = $player->getWorld();
+		$tile = $world->getTile($pos);
+		
+		if(!$tile instanceof CommandBlockTile){
+			return true;
+		}
+		$tile->setCommand($packet->command);
+
+		$mode = match($packet->mode){
+			CommandBlockMode::REPEATING => "REPEAT",
+			CommandBlockMode::CHAIN => "CHAIN",
+			default => "IMPULSE"
+		};
+		$tile->setMode($mode);
+		$tile->setConditional($packet->conditional);
+		$tile->setNeedsRedstone($packet->redstoneMode);
+		$tile->setDirty();
+
+		return true;
 	}
 
 	public function handlePlayerSkin(PlayerSkinPacket $packet) : bool{

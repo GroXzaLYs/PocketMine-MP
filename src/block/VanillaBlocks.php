@@ -39,6 +39,7 @@ use pocketmine\block\tile\Campfire as TileCampfire;
 use pocketmine\block\tile\Cauldron as TileCauldron;
 use pocketmine\block\tile\Chest as TileChest;
 use pocketmine\block\tile\ChiseledBookshelf as TileChiseledBookshelf;
+use pocketmine\block\tile\CommandBlock as TileCommandBlock;
 use pocketmine\block\tile\Comparator as TileComparator;
 use pocketmine\block\tile\DaylightSensor as TileDaylightSensor;
 use pocketmine\block\tile\EnchantTable as TileEnchantingTable;
@@ -937,6 +938,7 @@ final class VanillaBlocks{
 		self::register("bookshelf", fn(BID $id) => new Bookshelf($id, "Bookshelf", new Info(BreakInfo::axe(1.5))));
 		self::register("chiseled_bookshelf", fn(BID $id) => new ChiseledBookshelf($id, "Chiseled Bookshelf", new Info(BreakInfo::axe(1.5))), TileChiseledBookshelf::class);
 		self::register("brewing_stand", fn(BID $id) => new BrewingStand($id, "Brewing Stand", new Info(BreakInfo::pickaxe(0.5))), TileBrewingStand::class);
+		self::register("command_block", fn(BID $id) => new CommandBlock($id, "Command Block", new Info(BreakInfo::indestructible(18000000.0))), TileCommandBlock::class);
 
 		$bricksBreakInfo = new Info(BreakInfo::pickaxe(2.0, ToolTier::WOOD, 30.0));
 		self::register("brick_stairs", fn(BID $id) => new Stair($id, "Brick Stairs", $bricksBreakInfo));
